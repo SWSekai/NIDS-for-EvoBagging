@@ -45,26 +45,40 @@ class EvoBagging:
         bags[idx]['size'] = bags[idx]['X'].shape[0]
         return idx, copy.deepcopy(bags[idx])
 
-    def naive_selection(self, bags, mode="selection"):
+    def naive_selection(self, bags, mode="selection"): 
+        """
+            考慮到每個袋子大小的影響
+            selection: 選擇前n_select個袋子
+            crossover: 選擇前n_crossover個袋子
+        """
         selected_bag_dict = {}
         selected_ids = []
         bag_idx, payoff_list = [], []
-        for idx, bag in bags.items():
+        
+        for idx, bag in bags.items(): # bags.items() 回傳 (idx, bag)，idx是袋子的index，bag是袋子的內容
             bag_idx.append(idx)
-            payoff_list.append(bag['payoff'])
+            payoff_list.append(bag['payoff']) # payoff是袋子的效能
+            
         if mode=="selection":
+            # 依照效能排序，選擇前 n_select 個袋子，由大到小
             selected_ids = [idx for _, idx in sorted(zip(payoff_list, bag_idx), reverse=True)][:self.n_select]
             selected_bag_dict = {i: bags[i] for i in selected_ids}
+            
             return selected_bag_dict, selected_ids
         elif mode=="crossover":
+            # 依照效能排序，選擇前 n_crossover 個袋子，由大到小
             selected_ids = [idx for _, idx in sorted(zip(payoff_list, bag_idx), reverse=True)][:self.n_crossover]
+            
             return None, selected_ids
 
     def gen_new_bag(self):
-        initial_size = random.randrange(int(self.max_initial_size/2), self.max_initial_size)
+        initial_size = random.randrange(int(self.max_initial_size/2), self.max_initial_size) # 隨機決定初始袋子尺寸(數量從 1/2~1 max_initial_size 均勻分配)
+        
+        # 隨機抽取 initial_size 個樣本
         bag_idx = random.choices(list(self.y_train.index), k=initial_size)
         temp_X = self.X_train.loc[bag_idx, :]
         temp_y = self.y_train.loc[bag_idx, :]
+        
         return {'X': temp_X, 'y': temp_y}
 
     def generation_gap(self, new_bags, bags):
@@ -177,4 +191,5 @@ class EvoBagging:
         bags = copy.deepcopy(new_bags)
         # evaluate
         bags = self.evaluate_bags(bags)
+        
         return bags
