@@ -17,14 +17,14 @@ class EvoBagging:
                 size_coef, metric, procs):
         self.X_train = X_train
         self.y_train = y_train
-        self.n_select = n_select
-        self.n_new_bags = n_new_bags
-        self.max_initial_size = max_initial_size
-        self.n_crossover = n_crossover
-        self.n_mutation = n_mutation
-        self.mutation_size = mutation_size
-        self.size_coef = size_coef
-        self.metric = metric
+        self.n_select = n_select # 選擇前n_select個袋子
+        self.n_new_bags = n_new_bags # 新袋子數量
+        self.max_initial_size = max_initial_size # 初始袋子尺寸
+        self.n_crossover = n_crossover # 交配前n_crossover個袋子
+        self.n_mutation = n_mutation # 突變前n_mutation個袋子
+        self.mutation_size = mutation_size # 突變資料量
+        self.size_coef = size_coef # 袋子大小權重
+        self.metric = metric 
         self.procs = procs
 
     def get_score(self, X, y):
@@ -86,6 +86,7 @@ class EvoBagging:
             new_bag = self.gen_new_bag()
             new_bag_idx = random.choice(list(set(range(len(bags))) - set(new_bags.keys())))
             new_bags[new_bag_idx] = new_bag
+            
         return new_bags
 
     def crossover_pair(self, parent1, parent2):    
