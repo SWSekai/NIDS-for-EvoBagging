@@ -3,6 +3,7 @@ from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from imblearn.over_sampling import ADASYN
 from sklearn.preprocessing import LabelEncoder
+from evobagging_methods import EvoBagging 
 
 def check_dataset(dataset, mode='shape'):
     if mode == 'info':
@@ -133,7 +134,7 @@ columns = (['duration'
 ,'dst_host_rerror_rate'
 ,'dst_host_srv_rerror_rate'
 ,'label'
-,'level'])
+,'level'])   
 
 def main():
     # 載入NSL-KDD資料集
@@ -184,6 +185,18 @@ def main():
 
     X_train, Y_train = oversampler.fit_resample(X_train, Y_train_encoded) # 進行過採樣
 
-    resampled_attack_labels = label_encoder.inverse_transform(Y_train) # 將編碼的標籤轉回原始標籤
+    Y_train_resampled = pd.DataFrame(Y_train_resampled, columns=['label'], index=X_train.index)
     
+    evoBag = EvoBagging(n_select = 5  # 選擇前5個袋子
+                        , n_new_bags = 3  # 新袋子數量
+                        , max_initial_size = X_train.shape[0]-1  # 初始袋子尺寸，與數據集樣本數量相同
+                        , n_crossover = 4  # 交配前4個袋子
+                        , n_mutation = 2  # 突變前2個袋子
+                        , mutation_size = 50  # 突變資料量
+                        , size_coef = 1000  # 袋子大小權重
+                        , metric = 'f1'  # 評估指標，例如 'f1_score' 或 'accuracy_score'
+                        , procs = 4  # 並行處理的進程數
+    )
+    initial_bags = {}
     
+    num_initial_bags = 10
