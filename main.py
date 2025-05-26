@@ -97,24 +97,23 @@ columns = (['duration'
 ,'dst_host_rerror_rate'
 ,'dst_host_srv_rerror_rate'
 ,'label'
-,'level'])   
+,'level'])
+
+def readDataset(path):
+    dataset = pd.read_csv(path)
+    dataset.columns = columns
+    dataset = dataset.drop(columns=['level']) # 去除 level 欄位
+    dataset_header = list(dataset.columns) 
+    dataset = pd.DataFrame(data=dataset, columns=dataset_header)
+    
+    return dataset
 
 def main():
-    # 載入NSL-KDD資料集
-
     # 訓練資料集讀取
-    train_dataset = pd.read_csv('KDDTrain+.csv')
-    train_dataset.columns = columns
-    train_dataset = train_dataset.drop(columns=['level']) # 去除 level 欄位
-    train_dataset_header = list(train_dataset.columns) 
-    train_dataset = pd.DataFrame(data=train_dataset, columns=train_dataset_header)
+    train_dataset = readDataset('KDDTrain+.csv')
 
     # 測試資料集讀取
-    test_dataset = pd.read_csv('KDDTest+.csv')
-    test_dataset.columns = columns
-    test_dataset = test_dataset.drop(columns=['level']) # 去除 level 欄位
-    test_dataset_header = list(test_dataset.columns)
-    test_dataset = pd.DataFrame(data=test_dataset, columns=test_dataset_header)
+    test_dataset = readDataset('KDDTest+.csv')
     
     # one-hot encoding
     train_dataset = one_hot_encoding(train_dataset)
