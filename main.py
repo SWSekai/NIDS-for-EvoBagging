@@ -4,16 +4,6 @@ import matplotlib.pyplot as plt
 from imblearn.over_sampling import ADASYN
 from sklearn.preprocessing import LabelEncoder
 from evobagging_methods import EvoBagging 
-
-def check_dataset(dataset, mode='shape'):
-    if mode == 'info':
-        print(dataset.info())
-    elif mode == 'head':
-        print(dataset.head())
-    elif mode == 'shape':
-        print(f"{dataset.shape}")
-    else:
-        raise ValueError("Invalid mode. Use 'info', 'head' or 'shape'.")
     
 def one_hot_encoding(data):
     non_numerial_columns = ['protocol_type', 'service', 'flag']
@@ -64,33 +54,6 @@ def change_label(df):
     df['label'] = df.label.where(df.label.isin(['DoS', 'R2L', 'Probe', 'U2R']), 'Normal')
     
     return df
-
-def label_distribution(data1, data2):
-    """
-        繪製資料集的標籤分佈圖
-    """
-    data1_counts = data1['label'].value_counts()
-    data2_counts = data2['label'].value_counts()
-    
-    combined  = pd.DataFrame({
-        'Train': data1_counts,
-        'Test': data2_counts
-    }).fillna(0) # 若某些 label 在其中一個資料集中缺少，填 0
-    
-    # 自訂排序
-    order = ['Normal', 'DoS', 'Probe', 'R2L', 'U2R']
-    
-    combined = combined.reindex(order)
-    
-    # 繪製圖形
-    combined.plot(kind='bar', figsize=(12, 6))
-    plt.title('NSL-KDD Train vs Test Label Distribution')
-    plt.xlabel('Label')
-    plt.ylabel('Count')
-    plt.xticks(rotation=45) 
-    plt.legend(title='Dataset')
-    plt.tight_layout()
-    plt.show()
     
 columns = (['duration'
 ,'protocol_type'
