@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-import matplotlib.pyplot as plt
 from imblearn.over_sampling import ADASYN
 from sklearn.preprocessing import LabelEncoder
 from evobagging_methods import EvoBagging 
