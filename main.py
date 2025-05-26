@@ -185,18 +185,26 @@ def main():
 
     X_train, Y_train = oversampler.fit_resample(X_train, Y_train_encoded) # 進行過採樣
 
-    Y_train_resampled = pd.DataFrame(Y_train_resampled, columns=['label'], index=X_train.index)
+    Y_train = pd.DataFrame(Y_train, columns=['label'], index=X_train.index)
     
-    evoBag = EvoBagging(n_select = 5  # 選擇前5個袋子
-                        , n_new_bags = 3  # 新袋子數量
-                        , max_initial_size = X_train.shape[0]-1  # 初始袋子尺寸，與數據集樣本數量相同
-                        , n_crossover = 4  # 交配前4個袋子
-                        , n_mutation = 2  # 突變前2個袋子
-                        , mutation_size = 50  # 突變資料量
-                        , size_coef = 1000  # 袋子大小權重
-                        , metric = 'f1'  # 評估指標，例如 'f1_score' 或 'accuracy_score'
-                        , procs = 4  # 並行處理的進程數
-    )
-    initial_bags = {}
+    # EvoBagging parameter setting
+    n_select = 5  # 選擇袋子數量
+    n_new_bags = 3  # 新袋子數量
+    max_initial_size = 1000  # 初始袋子尺寸
+    n_crossover = 4  # 交配袋子數量
+    n_mutation = 2  # 突變袋子數量
+    mutation_size = 50  # 突變資料量
+    size_coef = 1000  # 袋子大小權重
+    metric = 'f1'  # 評估指標
+    procs = 4  # 並行處理的進程數
     
     num_initial_bags = 10
+
+    
+    evoBag = EvoBagging(X_train, Y_train,
+                        n_select, n_new_bags,
+                        max_initial_size, n_crossover,
+                        n_mutation, mutation_size,
+                        size_coef, metric, procs)
+    
+    initial_bags = {}
